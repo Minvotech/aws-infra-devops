@@ -1,0 +1,27 @@
+{
+    "index_patterns": ["logs-*"],
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "kubernetes": {
+          "properties": {
+            "namespace_name": {
+              "type": "keyword"
+            },
+            "pod_name": {
+              "type": "keyword"
+            },
+            "container_name": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }

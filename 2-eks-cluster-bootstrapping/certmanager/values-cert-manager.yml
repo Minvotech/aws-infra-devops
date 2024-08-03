@@ -1,0 +1,62 @@
+# Default values for cert-manager.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  ## Reference to one or more secrets to be used when pulling images
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  imagePullSecrets: []
+
+replicaCount: 1
+
+strategy: {}
+
+image:
+  repository: quay.io/jetstack/cert-manager-controller
+  tag: v1.11.4
+  pullPolicy: IfNotPresent
+
+clusterResourceNamespace: ""
+
+leaderElection:
+  namespace: ""
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: ""
+
+extraArgs: []
+
+extraEnv: []
+
+resources: {}
+
+securityContext:
+  enabled: false
+  fsGroup: 1001
+  runAsUser: 1001
+
+podAnnotations: {}
+
+podLabels: {}
+
+nodeSelector: {}
+
+#ingressShim: {}
+
+webhook:
+  enabled: true
+
+affinity: {}
+
+tolerations: []
+crds:
+  create: true 
+  install: true
+
+#installCRDs: false
+#args:
+#  - "--acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v0.6.2"

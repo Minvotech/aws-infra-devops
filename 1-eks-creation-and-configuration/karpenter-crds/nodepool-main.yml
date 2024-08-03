@@ -1,0 +1,63 @@
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: provisioner-main-final
+spec:
+  disruption:
+    consolidateAfter: 30s
+    consolidationPolicy: WhenEmpty   #WhenUnderutilized 
+    expireAfter: 720h0m0s
+  limits:
+    cpu: 1k
+    memory: 100Gi
+  template:
+    metadata:
+      # annotations: # will be applied to all nodes
+      #   karpenter.sh/do-not-disrupt: "true"
+      labels:
+        basic-node: main-pool #main-node
+    spec:
+      taints:
+        - key:  main-pool #main-node
+          effect: NoSchedule
+      nodeClassRef:
+        name: provisioner-main-final
+      requirements:
+      - key: karpenter.sh/capacity-type
+        operator: In
+        values:
+        - on-demand
+      - key: karpenter.k8s.aws/instance-family
+        operator: In
+        values:
+        - t4g
+        - r6g
+        - r5
+        - c6g
+        - r6g
+        - c5
+        - c4
+        - c5d
+        - c5a
+        - c5ad
+        - c5n
+      - key: karpenter.k8s.aws/instance-size
+        operator: In
+        values:
+        - medium
+        - large
+        - xlarge
+      - key: topology.kubernetes.io/zone
+        operator: In
+        values:
+        - ca-central-1a
+        - ca-central-1b
+        - ca-central-1d
+      - key: kubernetes.io/os
+        operator: In
+        values:
+        - linux
+      - key: kubernetes.io/arch
+        operator: In
+        values:
+        - amd64

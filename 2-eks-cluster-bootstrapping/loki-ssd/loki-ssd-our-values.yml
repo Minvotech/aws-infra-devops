@@ -1,0 +1,87 @@
+## chart url https://github.com/grafana/loki/tree/main/production/helm/loki
+## installation and uninstallation commands
+## Installing loki in simple scalable mode
+# ```
+# helm repo add grafana https://grafana.github.io/helm-charts
+# helm repo update
+# helm install --values temp/logging/loki-ssd-values.yml loki grafana/loki --namespace logging
+# ```
+
+# ## For deleting the release
+# ### 1. delete the helm chart
+# ```bash
+# helm delete loki -n logging
+# ```
+
+# ### 2. Force delete the remaining pods
+# ```bash
+# kubectl delete po <pod-name> --grace-period=0 --force -n logging
+# ```
+
+# ### 3. If you don't want the data delete the pvc also
+# ```bash
+# kubectl delete pvc data-loki-write-0  data-loki-write-1 -n logging
+# ```
+
+# ## Create promtail
+# - configure your loki-enpoint in promtail under clients.url in the daemonset configs
+#   > `http://<loki-gateway-svc-name>.<namespace>.svc.cluster.local:80/loki/api/v1/push`
+
+
+# - Then apply your promtail config 
+#   ```
+#   kubectl apply -f promtail-file.yml
+#   ```
+
+serviceAccount:
+  name: loki-sa-prod
+  annotations:
+    "eks.amazonaws.com/role-arn": "arn:aws:iam::211337202074:role/eks-prod-loki-role-prod"
+
+loki:
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 2
+  storage:
+    type: "s3"
+    s3:
+      region: ca-central-1
+    bucketNames:
+      chunks: owais-eks-prod-loki-chunks-prod
+      ruler: owais-eks-prod-loki-ruler-prod
+      admin: owais-eks-prod-loki-admin-prod
+  # for avoiding too many requests error (no data error)
+  query_scheduler:
+    max_outstanding_requests_per_tenant: 4096
+  frontend:
+    max_outstanding_per_tenant: 4096
+  query_range:
+    parallelise_shardable_queries: true
+  limits_config:
+    split_queries_by_interval: 15m
+    max_query_parallelism: 32
+
+write:
+  replicas: 2
+read:
+  replicas: 2
+backend:
+  replicas: 2
+
+test:
+  enabled: false
+
+monitoring:
+  dashboards:
+    enabled: false
+  rules:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+  selfMonitoring:
+    enabled: false
+  lokiCanary:
+    enabled: false
+  grafanaAgent:
+    installOperator: false
+      

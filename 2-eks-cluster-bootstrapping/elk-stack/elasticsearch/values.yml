@@ -1,0 +1,18 @@
+replicas: 1
+minimumMasterNodes: 1
+imageTag: "7.17.9"
+
+ingress:
+  enabled: true
+  className: "new-kong"
+  hosts:
+    - host: es.lzaz.com #Change the hostname to the one you need
+      paths:
+        - path: /
+  
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: gp2

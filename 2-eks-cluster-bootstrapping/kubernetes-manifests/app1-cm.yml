@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app1-cm-prod
+  namespace: apps-prod
+data:
+  HOST_NAME: 0.0.0.0
+  MYSQL_DB: owais_prod
+  MYSQL_HOST: owais-db3-mysql-instance-sta.covkeyllbncs.ca-central-1.rds.amazonaws.com
+  NODE_ENV: prod
+  PORT: "80"
+  REDIS_DATABASE: "10"
+  REDIS_HOST: ec-redis.prod

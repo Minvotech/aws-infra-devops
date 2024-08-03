@@ -1,0 +1,33 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongClusterPlugin
+metadata:
+  name: prometheus
+  namespace: cluster-bootstrapping
+  annotations:
+    kubernetes.io/ingress.class: new-kong
+  labels:
+    global: "true"
+config:
+  status_code_metrics: true
+  latency_metrics: true
+  bandwidth_metrics: true
+  upstream_health_metrics: true
+  per_consumer: false
+plugin: prometheus
+---
+apiVersion: configuration.konghq.com/v1
+config:
+  bandwidth_metrics: true
+  latency_metrics: true
+  per_consumer: false
+  status_code_metrics: true
+  upstream_health_metrics: true
+kind: KongPlugin
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: new-kong
+  labels:
+    global: "true"
+  name: prometheus
+  namespace: cluster-bootstrapping
+plugin: prometheus

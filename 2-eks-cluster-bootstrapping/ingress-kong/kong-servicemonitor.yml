@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kong
+    meta.helm.sh/release-namespace: cluster-bootstrapping
+  labels:
+    app.kubernetes.io/name: kong
+    release: prometheus
+  name: new-kong
+  namespace: cluster-bootstrapping
+spec:
+  endpoints:
+  - scheme: http
+    targetPort: status
+    interval: 10s
+  - scheme: http
+    targetPort: cmetrics
+    interval: 10s
+  namespaceSelector:
+    matchNames:
+    - cluster-bootstrapping
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kong
+      enable-metrics: "true"

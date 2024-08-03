@@ -1,0 +1,27 @@
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: provisioner-graviton
+spec:
+  amiFamily: AL2
+  role: "karpenter-node-eks-prod"
+  securityGroupSelectorTerms:
+  - tags:
+      karpenter.sh/discovery: eks-prod
+  subnetSelectorTerms:
+  - tags:
+      karpenter.sh/discovery: eks-prod
+  tags:
+    Name: eks-APPS-graviton
+  # Optional, configures storage devices for the instance
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 30Gi
+        volumeType: gp3
+        iops: 3000
+        encrypted: true
+#        kmsKeyID: "e2c6dca9-1155-4337-abf8-b0cebb7a2270"
+        deleteOnTermination: true
+#        throughput: 125
+#        snapshotID: snap-0123456789

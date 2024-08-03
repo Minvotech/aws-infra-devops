@@ -1,0 +1,22 @@
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: provisioner-main-final
+spec:
+  amiFamily: AL2
+  role: "karpenter-node-eks-prod"
+  securityGroupSelectorTerms:
+  - tags:
+      karpenter.sh/discovery: eks-prod
+  subnetSelectorTerms:
+  - tags:
+      karpenter.sh/discovery: eks-prod
+  tags:
+    Name: eks-APPS-main
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 40Gi
+        volumeType: gp3
+        iops: 3000
+        encrypted: true
