@@ -29,3 +29,9 @@ The Grafana instance is accessible at the URL :
 This Grafana instance serves as the central dashboard for visualizing the metrics and logs collected by the Prometheus and Loki components.
 Users can explore the various dashboards and panels to monitor the health, performance, and logs of the applications and infrastructure running in the EKS cluster.
 Overall, this Terraform code sets up a comprehensive monitoring and observability stack for the EKS cluster, including Ingress-Kong for advanced traffic management, the Prometheus stack for monitoring and logging, and Cert-Manager for automated TLS certificate management. The Grafana instance provides a centralized interface for visualizing and analyzing the collected metrics and logs.
+
+- 
+Regarding the Deployment Deliverable : in the 05_app1.tf :
+Implemented Kubernetes manifests that deploy the application in a multi-container pod, set up a service to expose the application, 
+and working from this url : app1.lzaz.com
+configure a horizontal pod autoscaler, and create a ConfigMap and a Secret for application configuratio
