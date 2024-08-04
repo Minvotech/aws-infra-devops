@@ -59,6 +59,8 @@ The code creates a new security group using the aws_security_group resource.
 This security group is associated with the EC2 instance and defines the inbound and outbound traffic rules.
 The inbound rules allow HTTP (port 80) and SSH (port 22) traffic to the EC2 instance.
 The outbound rules allow all traffic from the EC2 instance.
+Also .. I apply A docker-compose file that sets up Prometheus and Grafana and ELk stack
+
 RDS Instance Creation:
 The code creates a new RDS instance using the aws_db_instance resource.
 It specifies the engine type as "mysql" and sets the database name, username, and password.
@@ -68,3 +70,5 @@ Additional RDS configuration parameters, such as instance class, storage, and ba
 Security Group Attachment:
 The code attaches the security group created for the EC2 instance to the RDS instance using the aws_db_security_group resource.
 This allows the EC2 instance to communicate with the RDS instance over the specified ports and protocols.
+
+
