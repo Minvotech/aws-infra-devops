@@ -31,7 +31,11 @@ Users can explore the various dashboards and panels to monitor the health, perfo
 Overall, this Terraform code sets up a comprehensive monitoring and observability stack for the EKS cluster, including Ingress-Kong for advanced traffic management, the Prometheus stack for monitoring and logging, and Cert-Manager for automated TLS certificate management. The Grafana instance provides a centralized interface for visualizing and analyzing the collected metrics and logs.
 
 - 
-Regarding the Deployment Deliverable : in the 05_app1.tf :
+# Regarding the Deployment Deliverable : in the 05_app1.tf :
 Implemented Kubernetes manifests that deploy the application in a multi-container pod, set up a service to expose the application, 
 and working from this url : app1.lzaz.com
 configure a horizontal pod autoscaler, and create a ConfigMap and a Secret for application configuratio
+
+# in 06_policy-network.tf   [  network policies in Kubernetes to restrict pod-to-pod communication ]
+The block_traffic_policy NetworkPolicy blocks all ingress traffic to and egress traffic from pods with the label app=pod1 and app=pod2, respectively, effectively isolating them from each other. This ensures that no communication occurs between these two groups of pod
+
