@@ -1,0 +1,86 @@
+import requests
+import psycopg2
+import boto3
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+import os
+import datetime
+
+# Configuration
+APPLICATION_HEALTH_URL = "http://your-application-url/health"
+DB_HOST = "your-db-host"
+DB_PORT = "5432"
+DB_NAME = "your-db-name"
+DB_USER = "your-db-user"
+DB_PASSWORD = "your-db-password"
+AWS_ACCESS_KEY = "your-aws-access-key"
+AWS_SECRET_KEY = "your-aws-secret-key"
+S3_BUCKET = "your-s3-bucket-name"
+BACKUP_PATH = "/path/to/backup/"
+NEW_DB_PASSWORD = "your-new-db-password"
+
+# 1. Perform a health check on the deployed application
+def perform_health_check():
+    try:
+        response = requests.get(APPLICATION_HEALTH_URL)
+        if response.status_code == 200:
+            print("Application is healthy.")
+        else:
+            print("Application health check failed with status code:", response.status_code)
+    except requests.RequestException as e:
+        print("Application health check failed:", e)
+
+# 2. Rotate database credentials
+def rotate_db_credentials():
+    try:
+        # Connect to the PostgreSQL database
+        connection = psycopg2.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD
+        )
+        connection.autocommit = True
+        cursor = connection.cursor()
+
+        # Change the database user password
+        cursor.execute(f"ALTER USER {DB_USER} WITH PASSWORD '{NEW_DB_PASSWORD}';")
+        print(f"Database password for user {DB_USER} has been updated.")
+        
+        # Close the connection
+        cursor.close()
+        connection.close()
+
+    except psycopg2.DatabaseError as error:
+        print("Error rotating database credentials:", error)
+
+# 3. Backup the application data
+def backup_application_data():
+    try:
+        # Connect to the S3 bucket
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=AWS_ACCESS_KEY,
+            aws_secret_access_key=AWS_SECRET_KEY
+        )
+
+        # Create a backup file name with timestamp
+        backup_file_name = f"backup_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.sql"
+        backup_file_path = os.path.join(BACKUP_PATH, backup_file_name)
+
+        # Create a PostgreSQL database dump
+        os.system(f"pg_dump -h {DB_HOST} -p {DB_PORT} -U {DB_USER} -F c {DB_NAME} > {backup_file_path}")
+
+        # Upload the backup file to S3
+        s3_client.upload_file(backup_file_path, S3_BUCKET, backup_file_name)
+        print(f"Backup {backup_file_name} has been uploaded to S3 bucket {S3_BUCKET}.")
+
+    except (NoCredentialsError, PartialCredentialsError) as e:
+        print("Error with AWS credentials:", e)
+    except Exception as e:
+        print("Error backing up application data:", e)
+
+if __name__ == "__main__":
+    perform_health_check()
+    rotate_db_credentials()
+    backup_application_data()
